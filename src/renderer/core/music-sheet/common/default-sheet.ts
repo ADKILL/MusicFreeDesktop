@@ -6,6 +6,10 @@ export default {
     title: i18n.t("media.default_favorite_sheet_name"),
     platform: localPluginName,
     musicList: [],
+
+    // ⭐ 新增：歌单来源（可选，用于“可刷新歌单”）
+    source: undefined,
+
     $$sortIndex: -1,
     $sortIndex: -1,
 };

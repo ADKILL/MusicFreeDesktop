@@ -36,9 +36,24 @@ export async function setupMusicSheets() {
  * @param sheetName 歌单名
  * @returns 新建的歌单信息
  */
-export async function addSheet(sheetName: string) {
+export async function addSheet(
+    sheetName: string,
+    source?: {
+        plugin: string;
+        keyword: string;
+        type?: string;
+    },
+) {
     try {
         const newSheetDetail = await backend.addSheet(sheetName);
+
+        // ⭐ 如果有来源信息，则写入歌单
+        if (source && newSheetDetail?.id) {
+            await backend.updateSheet(newSheetDetail.id, {
+                source,
+            });
+        }
+
         musicSheetsStore.setValue(backend.getAllSheets());
         return newSheetDetail;
     } catch {}

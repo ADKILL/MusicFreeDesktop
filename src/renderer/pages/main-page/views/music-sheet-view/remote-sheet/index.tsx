@@ -3,6 +3,8 @@ import { useParams } from "react-router-dom";
 import usePluginSheetMusicList from "./hooks/usePluginSheetMusicList";
 import MusicSheetlikeView from "@/renderer/components/MusicSheetlikeView";
 import { isSameMedia } from "@/common/media-util";
+import { useState } from "react";
+import { searchMusic } from "@/renderer/core/plugin";
 
 import MusicSheet from "@/renderer/core/music-sheet";
 import { useTranslation } from "react-i18next";
@@ -41,8 +43,64 @@ function RemoteSheetOptions(props: IProps) {
         isSameMedia(sheetItem, item),
     );
 
+    const [refreshing, setRefreshing] = useState(false);
+
+    async function handleRefresh() {
+        if (!sheetItem?.source || refreshing) return;
+
+        setRefreshing(true);
+        try {
+            const { plugin, keyword, type } = sheetItem.source;
+
+            // 重新搜索
+            const result = await searchMusic(plugin, keyword, {
+                type,
+            });
+
+            if (Array.isArray(result) && result.length > 0) {
+                // 去重：只加当前歌单里没有的
+                const existed = new Set(
+                    (sheetItem.musicList ?? []).map((m) => m.id),
+                );
+
+                const newMusics = result.filter(
+                    (m) => !existed.has(m.id),
+                );
+
+                if (newMusics.length > 0) {
+                    await MusicSheet.frontend.addMusicToSheet(
+                        newMusics,
+                        sheetItem.id,
+                    );
+                }
+            }
+        } catch (e) {
+            console.error("刷新歌单失败", e);
+        } finally {
+            setRefreshing(false);
+        }
+    }
+
     return (
         <>
+            {/* ⭐ 刷新按钮：只有“可刷新歌单”才显示 */}
+            {sheetItem?.source && (
+                <div
+                    role="button"
+                    className="option-button"
+                    data-type="normalButton"
+                    onClick={handleRefresh}
+                >
+                    <SvgAsset iconName="refresh"></SvgAsset>
+                    <span>
+                        {refreshing
+                            ? t("common.refreshing", "刷新中")
+                            : t("common.refresh", "刷新")}
+                    </span>
+                </div>
+            )}
+
+            {/* ❤️ 收藏按钮（原有功能） */}
             <div
                 role="button"
                 className="option-button"
@@ -58,7 +116,7 @@ function RemoteSheetOptions(props: IProps) {
                 <SvgAsset
                     iconName={isStarred ? "heart" : "heart-outline"}
                     color={isStarred ? "red" : undefined}
-                ></SvgAsset>
+                />
                 <span>{t("music_sheet_like_view.star")}</span>
             </div>
         </>
