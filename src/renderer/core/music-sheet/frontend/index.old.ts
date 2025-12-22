@@ -56,7 +56,7 @@ export async function addSheet(
 
         musicSheetsStore.setValue(backend.getAllSheets());
         return newSheetDetail;
-    } catch {}
+    } catch { }
 }
 
 /**
@@ -72,7 +72,7 @@ export async function updateSheet(
     try {
         await backend.updateSheet(sheetId, newData);
         musicSheetsStore.setValue(backend.getAllSheets());
-    } catch {}
+    } catch { }
 }
 
 /**
@@ -96,7 +96,7 @@ export async function updateSheetMusicOrder(
             musicList: musicList.map(toMediaBase) as any,
         });
         musicSheetsStore.setValue(backend.getAllSheets());
-    } catch {}
+    } catch { }
 }
 
 /**
@@ -108,7 +108,7 @@ export async function removeSheet(sheetId: string) {
     try {
         await backend.removeSheet(sheetId);
         musicSheetsStore.setValue(backend.getAllSheets());
-    } catch {}
+    } catch { }
 }
 
 /**
@@ -121,7 +121,7 @@ export async function clearSheet(sheetId: string) {
         await backend.clearSheet(sheetId);
         musicSheetsStore.setValue(backend.getAllSheets());
         refetchSheetDetail(sheetId);
-    } catch {}
+    } catch { }
 }
 
 /**
@@ -168,7 +168,7 @@ export async function addMusicToSheet(
 
     musicSheetsStore.setValue(backend.getAllSheets());
     if (sheetId === defaultSheet.id) {
-    // 更新默认列表的状态
+        // 更新默认列表的状态
         refreshFavoriteState();
     }
     refetchSheetDetail(sheetId);
@@ -197,7 +197,7 @@ export async function removeMusicFromSheet(
 
     musicSheetsStore.setValue(backend.getAllSheets());
     if (sheetId === defaultSheet.id) {
-    // 更新默认列表的状态
+        // 更新默认列表的状态
         refreshFavoriteState();
     }
     refetchSheetDetail(sheetId);
@@ -249,7 +249,7 @@ function updateSheetDetail(newSheet: IMusic.IMusicSheetItem) {
 async function refetchSheetDetail(sheetId: string) {
     let sheetDetail = await backend.getSheetItemDetail(sheetId);
     if (!sheetDetail) {
-    // 可能已经被删除了
+        // 可能已经被删除了
         sheetDetail = {
             id: sheetId,
             title: "已删除歌单",
@@ -383,4 +383,17 @@ export function useMusicSheet(sheetId: string) {
 
 export async function exportAllSheetDetails() {
     return await backend.exportAllSheetDetails();
+}
+
+/**
+ * 根据 source 刷新歌单
+ */
+export async function refreshSheetFromSource(sheetId: string) {
+    try {
+        await backend.refreshSheetFromSource(sheetId);
+        musicSheetsStore.setValue(backend.getAllSheets());
+        refetchSheetDetail(sheetId);
+    } catch (e) {
+        console.error("刷新歌单失败", e);
+    }
 }

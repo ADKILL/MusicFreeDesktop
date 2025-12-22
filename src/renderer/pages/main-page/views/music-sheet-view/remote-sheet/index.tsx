@@ -4,7 +4,6 @@ import usePluginSheetMusicList from "./hooks/usePluginSheetMusicList";
 import MusicSheetlikeView from "@/renderer/components/MusicSheetlikeView";
 import { isSameMedia } from "@/common/media-util";
 import { useState } from "react";
-import { searchMusic } from "@/renderer/core/plugin";
 
 import MusicSheet from "@/renderer/core/music-sheet";
 import { useTranslation } from "react-i18next";
@@ -46,40 +45,18 @@ function RemoteSheetOptions(props: IProps) {
     const [refreshing, setRefreshing] = useState(false);
 
     async function handleRefresh() {
-        if (!sheetItem?.source || refreshing) return;
+    if (!sheetItem?.source || refreshing) return;
 
-        setRefreshing(true);
-        try {
-            const { plugin, keyword, type } = sheetItem.source;
-
-            // 重新搜索
-            const result = await searchMusic(plugin, keyword, {
-                type,
-            });
-
-            if (Array.isArray(result) && result.length > 0) {
-                // 去重：只加当前歌单里没有的
-                const existed = new Set(
-                    (sheetItem.musicList ?? []).map((m) => m.id),
-                );
-
-                const newMusics = result.filter(
-                    (m) => !existed.has(m.id),
-                );
-
-                if (newMusics.length > 0) {
-                    await MusicSheet.frontend.addMusicToSheet(
-                        newMusics,
-                        sheetItem.id,
-                    );
-                }
-            }
-        } catch (e) {
-            console.error("刷新歌单失败", e);
-        } finally {
-            setRefreshing(false);
-        }
+    setRefreshing(true);
+    try {
+        await MusicSheet.frontend.refreshSheetFromSource(sheetItem.id);
+    } catch (e) {
+        console.error("刷新歌单失败", e);
+    } finally {
+        setRefreshing(false);
     }
+}
+
 
     return (
         <>
@@ -91,7 +68,7 @@ function RemoteSheetOptions(props: IProps) {
                     data-type="normalButton"
                     onClick={handleRefresh}
                 >
-                    <SvgAsset iconName="refresh"></SvgAsset>
+                    <SvgAsset iconName="reload"></SvgAsset>
                     <span>
                         {refreshing
                             ? t("common.refreshing", "刷新中")
