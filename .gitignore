@@ -100,3 +100,14 @@ plugins
 .idea/
 
 undefinedelectron-log-preload.js
+
+#python virtul environment
+.venv/
+
+#npm
+npm/
+pnpm-lock.yaml
+.npmrc
+
+#node
+node_modules/

@@ -505,7 +505,7 @@ export async function exportAllSheetDetails() {
     );
 }
 
-import { searchMusic } from "@/renderer/core/plugin-manager";
+// import { searchMusic } from "@/renderer/core/plugin-manager";
 
 /**
  * 根据 source 刷新歌单内容（追加去重）

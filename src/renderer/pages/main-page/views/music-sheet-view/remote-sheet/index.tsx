@@ -68,7 +68,7 @@ function RemoteSheetOptions(props: IProps) {
                     data-type="normalButton"
                     onClick={handleRefresh}
                 >
-                    <SvgAsset iconName="reload"></SvgAsset>
+                    <SvgAsset iconName="refresh"></SvgAsset>
                     <span>
                         {refreshing
                             ? t("common.refreshing", "刷新中")
