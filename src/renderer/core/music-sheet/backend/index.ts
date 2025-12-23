@@ -505,35 +505,35 @@ export async function exportAllSheetDetails() {
     );
 }
 
-// import { searchMusic } from "@/renderer/core/plugin-manager";
-
-/**
- * 根据 source 刷新歌单内容（追加去重）
- */
-export async function refreshSheetFromSource(sheetId: string) {
-    const sheet = await getSheetItemDetail(sheetId);
-    if (!sheet || !sheet.source) return;
-
-    const { plugin, keyword, type } = sheet.source;
-
-    // 重新搜索
-    const result = await searchMusic(plugin, keyword, {
-        type,
-    });
-
-    if (!Array.isArray(result) || result.length === 0) return;
-
-    // 现有歌曲 ID 集合，用于去重
-    const existedIds = new Set(
-        (sheet.musicList ?? []).map((m) => m.id),
-    );
-
-    const newMusics = result.filter(
-        (m) => !existedIds.has(m.id),
-    );
-
-    if (newMusics.length === 0) return;
-
-    // 追加到歌单
-    await addMusicToSheet(newMusics, sheetId);
-}
+//** import { searchMusic } from "@/renderer/core/plugin-manager";
+//
+//**
+// * 根据 source 刷新歌单内容（追加去重）
+//*/
+//export async function refreshSheetFromSource(sheetId: string) {
+//  const sheet = await getSheetItemDetail(sheetId);
+//    if (!sheet || !sheet.source) return;
+//
+//    const { plugin, keyword, type } = sheet.source;
+//
+//    // 重新搜索
+//    const result = await searchMusic(plugin, keyword, {
+//        type,
+//    });
+//
+//    if (!Array.isArray(result) || result.length === 0) return;
+//
+//    // 现有歌曲 ID 集合，用于去重
+//    const existedIds = new Set(
+//        (sheet.musicList ?? []).map((m) => m.id),
+//    );
+//
+//    const newMusics = result.filter(
+ //       (m) => !existedIds.has(m.id),
+//    );
+//
+//    if (newMusics.length === 0) return;
+//
+//   // 追加到歌单
+//   await addMusicToSheet(newMusics, sheetId);
+//}

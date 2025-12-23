@@ -67,7 +67,8 @@ export type SvgAssetIconNames =
     | "sd"
     | "hq"
     | "sq"
-    | "x-mark";
+    | "x-mark"
+    | "refresh";
 
 interface IProps {
     iconName: SvgAssetIconNames;
