@@ -34,6 +34,40 @@ export function getAllStarredSheets() {
     return starredMusicSheets;
 }
 
+import PluginManager from "@/renderer/core/plugin-manager";
+
+/**
+ * Refresh a music sheet from its original source
+ * (used by frontend/index.old.ts)
+ */
+export async function refreshSheetFromSource(sheetId: string) {
+    const sheet = await getSheetItemDetail(sheetId);
+    if (!sheet || !sheet.source) return;
+
+    const { plugin, keyword, type } = sheet.source;
+
+    const pluginInstance = PluginManager.getPlugin(plugin);
+    if (!pluginInstance || typeof pluginInstance.search !== "function") {
+        return;
+    }
+
+    const result = await pluginInstance.search(keyword, { type });
+    if (!Array.isArray(result) || result.length === 0) return;
+
+    const existedIds = new Set(
+        (sheet.musicList ?? []).map((m) => m.id),
+    );
+
+    const newMusics = result.filter(
+        (m) => !existedIds.has(m.id),
+    );
+
+    if (newMusics.length === 0) return;
+
+    await addMusicToSheet(newMusics, sheetId);
+}
+
+
 /**
  *
  * 查询所有歌单信息（无详情）
