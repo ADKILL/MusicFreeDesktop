@@ -34,7 +34,7 @@ export function getAllStarredSheets() {
     return starredMusicSheets;
 }
 
-import PluginManager from "@/renderer/core/plugin-manager";
+import PluginManager from "../../plugin-manager";
 
 /**
  * Refresh a music sheet from its original source
